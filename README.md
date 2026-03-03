@@ -22,14 +22,14 @@ The architecture demonstrates core distributed systems patterns — producer-con
 
 ```mermaid
 flowchart LR
-    A[/"all-data.csv\n4,846 headlines"/] -->|loop + throttle| C
+    A[/"all-data.csv<br/>4,846 headlines"/] -->|loop + throttle| C
     B["Finnhub REST API"] -->|poll every 60s| D
-    C["DataGenerator\nPekko Streams"] --> E
-    D["FinnhubClient\nPekko HTTP"] --> E
-    E[["Kafka\nfinancial-news"]] --> F
-    F["StreamingInference\nSpark Structured Streaming"] --> G
-    G[("PostgreSQL\nsentiment_results")] --> H
-    H["Grafana\nlocalhost:3000"]
+    C["DataGenerator<br/>Pekko Streams"] --> E
+    D["FinnhubClient<br/>Pekko HTTP"] --> E
+    E[["Kafka<br/>financial-news"]] --> F
+    F["StreamingInference<br/>Spark Structured Streaming"] --> G
+    G[("PostgreSQL<br/>sentiment_results")] --> H
+    H["Grafana<br/>localhost:3000"]
 ```
 
 ![Dashboard](assets/dashboard.png)
