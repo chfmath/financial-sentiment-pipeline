@@ -1,0 +1,37 @@
+finnhub {
+  # Get your API key at https://finnhub.io
+  # Override via environment variable: FINNHUB_TOKEN=xxx sbt run
+  token = "your_finnhub_token_here"
+  token = ${?FINNHUB_TOKEN}
+}
+
+kafka {
+  bootstrap-servers = "localhost:9092"
+  topic             = "financial-news"
+}
+
+model {
+  save-path = "./model/sentiment-pipeline"
+}
+
+database {
+  url      = "jdbc:postgresql://localhost:5432/sentiment"
+  user     = "pipeline"
+  password = "pipeline"
+  table    = "sentiment_results"
+}
+
+spark {
+  master   = "local[*]"
+  app-name = "FinancialSentimentPipeline"
+}
+
+data {
+  csv-path = "./data/all-data.csv"
+}
+
+generator {
+  # Messages published to Kafka per second.
+  # 10 is comfortable for a laptop demo; raise to 100+ to stress-test the pipeline.
+  messages-per-second = 10
+}

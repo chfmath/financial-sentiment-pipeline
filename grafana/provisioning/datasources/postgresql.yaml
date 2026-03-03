@@ -1,0 +1,15 @@
+apiVersion: 1
+
+datasources:
+  - name: PostgreSQL
+    uid: postgres-sentiment
+    type: postgres
+    url: postgres:5432
+    database: sentiment
+    user: pipeline
+    secureJsonData:
+      password: pipeline
+    jsonData:
+      sslmode: disable
+      postgresVersion: 1600
+    isDefault: true

@@ -1,0 +1,198 @@
+{
+  "annotations": { "list": [] },
+  "description": "Live financial sentiment analysis — Finnhub → Kafka → Spark MLlib → PostgreSQL",
+  "editable": true,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+
+    {
+      "id": 1,
+      "title": "Sentiment Distribution",
+      "type": "piechart",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
+      "datasource": { "type": "postgres", "uid": "postgres-sentiment" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "hideFrom": { "legend": false, "tooltip": false, "viz": false } }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "positive" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "negative" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "neutral" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "options": {
+        "pieType": "pie",
+        "displayLabels": ["name", "percent"],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": ["value", "percent"]
+        },
+        "tooltip": { "mode": "single", "sort": "none" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "postgres-sentiment" },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  COUNT(CASE WHEN sentiment = 'positive' THEN 1 END) AS positive,\n  COUNT(CASE WHEN sentiment = 'negative' THEN 1 END) AS negative,\n  COUNT(CASE WHEN sentiment = 'neutral'  THEN 1 END) AS neutral\nFROM sentiment_results",
+          "refId": "A"
+        }
+      ]
+    },
+
+    {
+      "id": 2,
+      "title": "Sentiment Over Time (per minute)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 16, "x": 8, "y": 0 },
+      "datasource": { "type": "postgres", "uid": "postgres-sentiment" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "auto",
+            "spanNulls": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "positive" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "negative" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "neutral" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "postgres-sentiment" },
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  date_trunc('minute', to_timestamp(\"ingestedAt\" / 1000.0)) AS time,\n  COUNT(CASE WHEN sentiment = 'positive' THEN 1 END) AS positive,\n  COUNT(CASE WHEN sentiment = 'negative' THEN 1 END) AS negative,\n  COUNT(CASE WHEN sentiment = 'neutral'  THEN 1 END) AS neutral\nFROM sentiment_results\nGROUP BY 1\nORDER BY 1",
+          "refId": "A"
+        }
+      ]
+    },
+
+    {
+      "id": 3,
+      "title": "Latest Headlines",
+      "type": "table",
+      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 8 },
+      "datasource": { "type": "postgres", "uid": "postgres-sentiment" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": { "type": "auto" },
+            "filterable": true,
+            "inspect": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "time" },
+            "properties": [
+              { "id": "displayName", "value": "Time" },
+              { "id": "custom.width", "value": 190 }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "source" },
+            "properties": [
+              { "id": "displayName", "value": "Source" },
+              { "id": "custom.width", "value": 130 }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "headline" },
+            "properties": [
+              { "id": "displayName", "value": "Headline" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "sentiment" },
+            "properties": [
+              { "id": "displayName", "value": "Sentiment" },
+              { "id": "custom.width", "value": 130 },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "positive": { "color": "green", "index": 0, "text": "Positive" },
+                      "negative": { "color": "red",   "index": 1, "text": "Negative" },
+                      "neutral":  { "color": "#5794F2","index": 2, "text": "Neutral"  }
+                    }
+                  }
+                ]
+              },
+              { "id": "custom.cellOptions", "value": { "type": "color-background" } }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "confidence" },
+            "properties": [
+              { "id": "displayName", "value": "Confidence" },
+              { "id": "unit", "value": "percentunit" },
+              { "id": "decimals", "value": 1 },
+              { "id": "custom.width", "value": 120 }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "cellHeight": "sm",
+        "footer": { "show": false },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "postgres-sentiment" },
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  to_timestamp(\"ingestedAt\" / 1000.0) AS time,\n  source,\n  headline,\n  sentiment,\n  ROUND(confidence::numeric, 3) AS confidence\nFROM sentiment_results\nORDER BY \"ingestedAt\" DESC\nLIMIT 50",
+          "refId": "A"
+        }
+      ]
+    }
+
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": ["financial", "sentiment", "kafka", "spark"],
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Financial Sentiment Pipeline",
+  "uid": "financial-sentiment",
+  "version": 3
+}
