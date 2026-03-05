@@ -1,6 +1,7 @@
 package com.pipeline.training
 
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.lit
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -37,6 +38,7 @@ class ModelTrainerSpec extends AnyFlatSpec with Matchers with BeforeAndAfterAll 
       ("results were broadly in line with forecasts",          "neutral"),
       ("firm secured a major new contract worth millions",     "positive")
     ).toDF("text", "label")
+      .withColumn("weight", lit(1.0))
   }
 
   "buildPipeline" should "create a pipeline with 6 stages" in {

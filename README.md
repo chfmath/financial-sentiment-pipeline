@@ -36,7 +36,7 @@ flowchart LR
 
 ## Key Components
 
-**ModelTrainer** — Builds and fits a 6-stage Spark ML pipeline: RegexTokenizer → StopWordsRemover → HashingTF → IDF → StringIndexer → LogisticRegression. Trained on the [Kaggle Financial PhraseBank](https://www.kaggle.com/datasets/ankurzing/sentiment-analysis-for-financial-news) (4,846 labelled headlines). Achieves ~70% accuracy on a held-out 20% split. Saves the fitted `PipelineModel` to disk.
+**ModelTrainer** — Builds and fits a 6-stage Spark ML pipeline: RegexTokenizer → StopWordsRemover → HashingTF → IDF → StringIndexer → LogisticRegression. Trained on the [Kaggle Financial PhraseBank](https://www.kaggle.com/datasets/ankurzing/sentiment-analysis-for-financial-news) (4,846 labelled headlines). Achieves ~69% accuracy (~62% macro F1) on a held-out 20% split, with inverse-frequency class weights to counter the dataset's neutral-heavy imbalance. Saves the fitted `PipelineModel` to disk.
 
 **StreamingInference** — Loads the saved `PipelineModel` and subscribes to the Kafka topic as a Spark Structured Streaming source. Processes micro-batches every 10 seconds via `foreachBatch`, writing `(headline, sentiment, confidence, ingestedAt, source)` to PostgreSQL.
 
