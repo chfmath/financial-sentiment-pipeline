@@ -49,7 +49,7 @@ flowchart LR
 ## Running
 
 ```bash
-# Copy config and add your Finnhub API key (only needed for FinnhubClient)
+# Copy the safe example config
 cp src/main/resources/application.conf.example src/main/resources/application.conf
 
 # Start Kafka, PostgreSQL, and Grafana
@@ -76,10 +76,18 @@ docker compose down -v     # stop and wipe all data
 
 ## Configuration
 
-All settings are in `src/main/resources/application.conf` (gitignored). Copy from the example and set your Finnhub token:
+The template for config is in `src/main/resources/application.conf.example`.
+
+The example uses defaults (`pipeline/pipeline`) for the Docker PostgreSQL service. For live Finnhub ingestion, pass your token via environment variable:
 
 ```bash
 FINNHUB_TOKEN=your_key sbt 'runMain com.pipeline.ingestion.FinnhubClient'
+```
+
+You can also override database settings without editing files:
+
+```bash
+DATABASE_URL='jdbc:postgresql://localhost:5432/sentiment' DATABASE_USER='pipeline' DATABASE_PASSWORD='pipeline' sbt 'runMain com.pipeline.inference.StreamingInference'
 ```
 
 ## Future Work

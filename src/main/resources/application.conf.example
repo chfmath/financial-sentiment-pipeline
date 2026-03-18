@@ -16,8 +16,11 @@ model {
 
 database {
   url      = "jdbc:postgresql://localhost:5432/sentiment"
+  url      = ${?DATABASE_URL}
   user     = "pipeline"
+  user     = ${?DATABASE_USER}
   password = "pipeline"
+  password = ${?DATABASE_PASSWORD}
   table    = "sentiment_results"
 }
 

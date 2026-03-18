@@ -48,6 +48,10 @@ build/
 
 ### Project-specific ─ keep secrets and large files out of VCS ###
 src/main/resources/application.conf
+src/main/resources/application.conf.local
+.env
+.env.*
+*.local.conf
 /data/
 /model/
 /checkpoints/
